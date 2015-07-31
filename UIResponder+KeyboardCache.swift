@@ -1,6 +1,7 @@
 // UIResponder+KeyboardCache
 //
-// Copyright (c) 2012 Brandon Williams (http://www.opetopic.com)
+// ObjectiveC version: Copyright (c) 2012 Brandon Williams (http://www.opetopic.com)
+// Switf version: Copyright (c) 2015 Andrea Busi (http://www.bubidevs.net)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +21,31 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-#import <UIKit/UIKit.h>
+import UIKit
 
-@interface UIResponder (KeyboardCache)
+var hasAlreadyCachedKeyboard = false
 
-+(void) cacheKeyboard;
-+(void) cacheKeyboard:(BOOL)onNextRunloop;
-
-@end
+extension UIResponder {
+    
+    class func cacheKeyboard(onNextRunloop: Bool = false) {
+        if !hasAlreadyCachedKeyboard {
+            hasAlreadyCachedKeyboard = true
+            if onNextRunloop {
+                let time = dispatch_time(DISPATCH_TIME_NOW, 0)
+                dispatch_after(time, dispatch_get_main_queue()) { () -> Void in
+                    UIResponder.executeKeyboardCache()
+                }
+            } else {
+                UIResponder.executeKeyboardCache()
+            }
+        }
+    }
+    
+    private class func executeKeyboardCache() {
+        let textField = UITextField()
+        UIApplication.sharedApplication().windows.last?.addSubview(textField)
+        textField.becomeFirstResponder()
+        textField.resignFirstResponder()
+        textField.removeFromSuperview()
+    }
+}
