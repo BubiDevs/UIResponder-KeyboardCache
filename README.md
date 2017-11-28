@@ -9,7 +9,7 @@ Plenty of people have asked about this issue on sites like [StackOverflow](http:
 
 This extension on `UIResponder` gives you a simple method `cacheKeyboard` so that you can control when this caching work is done. For example, if you are loading some data from a server, then you could invoke this during that downtime. You can also pass an optional `Bool` value. Passing 'true' to this method causes the cache invocation to happen on the *next* runloop. So, if you performed an animation just before calling this method it would not interrupt that animation.
 
-##Author
+## Author
 
 ### Swift version
 Andrea Busi  
